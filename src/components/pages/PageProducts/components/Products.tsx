@@ -17,25 +17,30 @@ export default function Products() {
 
   return (
     <Grid container spacing={4}>
-      {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-      {data.map(({ count, ...product }, index) => (
-        <Grid item key={product.id} xs={12} sm={6} md={4}>
+      {data.map((availableProduct) => (
+        <Grid item key={availableProduct.id} xs={12} sm={6} md={4}>
           <Card
             sx={{ height: "100%", display: "flex", flexDirection: "column" }}
           >
             <CardMedia
               sx={{ pt: "56.25%" }}
-              image={`https://source.unsplash.com/random?sig=${index}`}
+              image={`https://picsum.photos/seed/${availableProduct.id}/400/300`}
               title="Image title"
             />
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography gutterBottom variant="h5" component="h2">
-                {product.title}
+                {availableProduct.title}
               </Typography>
-              <Typography>{formatAsPrice(product.price)}</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {availableProduct.description}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
+                Dostępność: {availableProduct.count} szt.
+              </Typography>
+              <Typography variant="h6">{formatAsPrice(availableProduct.price)}</Typography>
             </CardContent>
             <CardActions>
-              <AddProductToCart product={product} />
+              <AddProductToCart product={availableProduct} />
             </CardActions>
           </Card>
         </Grid>
