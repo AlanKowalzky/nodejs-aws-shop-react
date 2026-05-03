@@ -17,30 +17,30 @@ export default function Products() {
 
   return (
     <Grid container spacing={4}>
-      {data.map((availableProduct) => (
-        <Grid item key={availableProduct.id} xs={12} sm={6} md={4}>
+      {data.map((product) => (
+        <Grid item key={product.id} xs={12} sm={6} md={4}>
           <Card
             sx={{ height: "100%", display: "flex", flexDirection: "column" }}
           >
             <CardMedia
               sx={{ pt: "56.25%" }}
-              image={`https://picsum.photos/seed/${availableProduct.id}/400/300`}
-              title="Image title"
+              image={`https://picsum.photos/seed/${product.id}/400/300`}
+              title={product.title}
             />
             <CardContent sx={{ flexGrow: 1 }}>
               <Typography gutterBottom variant="h5" component="h2">
-                {availableProduct.title}
+                {product.title}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {availableProduct.description}
+                {product.description}
               </Typography>
               <Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
-                Dostępność: {availableProduct.count} szt.
+                Dostępność: {product.count} szt.
               </Typography>
-              <Typography variant="h6">{formatAsPrice(availableProduct.price)}</Typography>
+              <Typography variant="h6">{formatAsPrice(product.price)}</Typography>
             </CardContent>
             <CardActions>
-              <AddProductToCart product={availableProduct} />
+              <AddProductToCart product={product} />
             </CardActions>
           </Card>
         </Grid>
