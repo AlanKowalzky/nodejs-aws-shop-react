@@ -14,7 +14,8 @@ const queryClient = new QueryClient({
   },
 });
 
-if (import.meta.env.DEV) {
+// Zmień warunek, aby makiety były uruchamiane tylko gdy zmienna VITE_USE_MOCKS jest ustawiona na "true"
+if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS === "true") {
   const { worker } = await import("./mocks/browser");
   worker.start({ onUnhandledRequest: "bypass" });
 }
