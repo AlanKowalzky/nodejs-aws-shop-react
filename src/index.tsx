@@ -7,6 +7,24 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { theme } from "~/theme";
+import axios from "axios";
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error?.response?.status;
+
+    if (status === 401) {
+      window.alert("Unauthorized request. Check your auth token.");
+    }
+
+    if (status === 403) {
+      window.alert("Forbidden request. The auth token is invalid or expired.");
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,7 +32,8 @@ const queryClient = new QueryClient({
   },
 });
 
-if (import.meta.env.DEV) {
+// Zmień warunek, aby makiety były uruchamiane tylko gdy zmienna VITE_USE_MOCKS jest ustawiona na "true"
+if (import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS === "true") {
   const { worker } = await import("./mocks/browser");
   worker.start({ onUnhandledRequest: "bypass" });
 }

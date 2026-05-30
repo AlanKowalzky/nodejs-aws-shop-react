@@ -1,6 +1,8 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import axios from "axios";
+import { getBasicAuthHeader } from "~/utils/auth";
 
 type CSVFileImportProps = {
   url: string;
@@ -9,6 +11,7 @@ type CSVFileImportProps = {
 
 export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   const [file, setFile] = React.useState<File>();
+  const [isUploading, setIsUploading] = React.useState(false);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -23,24 +26,48 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
   };
 
   const uploadFile = async () => {
-    console.log("uploadFile to", url);
+    if (!file) {
+      return;
+    }
 
-    // Get the presigned URL
-    // const response = await axios({
-    //   method: "GET",
-    //   url,
-    //   params: {
-    //     name: encodeURIComponent(file.name),
-    //   },
-    // });
-    // console.log("File to upload: ", file.name);
-    // console.log("Uploading to: ", response.data);
-    // const result = await fetch(response.data, {
-    //   method: "PUT",
-    //   body: file,
-    // });
-    // console.log("Result: ", result);
-    // setFile("");
+    const authHeader = getBasicAuthHeader();
+    if (!authHeader.Authorization) {
+      window.alert("Missing authorization token. Add it to localStorage first.");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const response = await axios.get<string>(url, {
+        params: {
+          name: file.name,
+        },
+        headers: authHeader,
+      });
+
+      const signedUrl = response.data;
+
+      const uploadResponse = await fetch(signedUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "text/csv",
+        },
+        body: file,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Upload failed with status ${uploadResponse.status}`);
+      }
+
+      setFile(undefined);
+      window.alert("File uploaded successfully");
+    } catch (error) {
+      console.error("CSV upload failed", error);
+      window.alert("CSV upload failed. Check the authorization token and try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
   return (
     <Box>
@@ -52,7 +79,9 @@ export default function CSVFileImport({ url, title }: CSVFileImportProps) {
       ) : (
         <div>
           <button onClick={removeFile}>Remove file</button>
-          <button onClick={uploadFile}>Upload file</button>
+          <button onClick={uploadFile} disabled={isUploading}>
+            {isUploading ? "Uploading..." : "Upload file"}
+          </button>
         </div>
       )}
     </Box>
