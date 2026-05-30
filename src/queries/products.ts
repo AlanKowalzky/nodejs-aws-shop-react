@@ -3,17 +3,14 @@ import API_PATHS from "~/constants/apiPaths";
 import { AvailableProduct } from "~/models/Product";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import React from "react";
-import { getBasicAuthHeader, getBearerAuthHeader } from "~/utils/auth";
+import { getBasicAuthHeader } from "~/utils/auth";
 
 export function useAvailableProducts() {
   return useQuery<AvailableProduct[], AxiosError>(
     "available-products",
     async () => {
       const res = await axios.get<AvailableProduct[]>(
-        `${API_PATHS.product}/products`,
-        {
-          headers: getBearerAuthHeader(),
-        }
+        `${API_PATHS.product}/product/available`
       );
       return res.data;
     }
@@ -33,10 +30,7 @@ export function useAvailableProduct(id?: string) {
     ["product", { id }],
     async () => {
       const res = await axios.get<AvailableProduct>(
-        `${API_PATHS.product}/products/${id}`,
-        {
-          headers: getBearerAuthHeader(),
-        }
+        `${API_PATHS.product}/product/${id}`
       );
       return res.data;
     },
