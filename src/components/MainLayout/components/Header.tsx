@@ -13,7 +13,12 @@ import Link from "@mui/material/Link";
 export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const auth = true;
+  const auth = Boolean(
+    localStorage.getItem("authorization_token") ||
+      localStorage.getItem("cognito_token") ||
+      localStorage.getItem("id_token") ||
+      localStorage.getItem("access_token")
+  );
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
